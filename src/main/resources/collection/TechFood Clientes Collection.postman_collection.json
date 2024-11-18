@@ -7,10 +7,10 @@
 	},
 	"item": [
 		{
-			"name": "Client",
+			"name": "Clientes",
 			"item": [
 				{
-					"name": "New Client",
+					"name": "01 - Cadastrar Cliente",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -24,11 +24,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/clients",
+							"raw": "{{base_url}}/api/clients",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"api",
 								"clients"
 							]
 						}
@@ -36,12 +37,12 @@
 					"response": []
 				},
 				{
-					"name": "Client by cpf",
+					"name": "02 - Buscar Client por cpf",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/clients/cpf/123.456.789-00",
+							"raw": "{{base_url}}/api/clients/cpf/03003029911",
 							"host": [
 								"{{base_url}}"
 							],
@@ -49,14 +50,14 @@
 								"api",
 								"clients",
 								"cpf",
-								"123.456.789-00"
+								"03003029911"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Get All clients",
+					"name": "03 - Buscar todos os Clientes",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -74,7 +75,7 @@
 					"response": []
 				},
 				{
-					"name": "Update Client",
+					"name": "04 - Atualizar Cliente",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -129,7 +130,7 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "http://localhost:8080",
+			"value": "http://localhost:8081",
 			"type": "string"
 		}
 	]
