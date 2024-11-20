@@ -21,14 +21,16 @@ class ClientUseCase(
         }
 
         val newClient = Client(
-            id = UUID.randomUUID(),
+            id = uuid, // Use the provided UUID
             cpf = clientCpf,
             name = clientName,
             email = clientEmail
         )
 
+        // Persist and return the new client
         return clientOutput.persist(newClient)
     }
+
 
     override fun getClientByCpf(clientCpf: String): ClientVO =
         clientOutput.findByCpf(clientCpf)?: throw ClientNotFoundException()

@@ -20,6 +20,4 @@ data class ClientEntity(
     @Column(nullable = false, unique = true)
     var email: String,
 
-//    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
-//    var orders: List<OrderEntity> = listOf()
 )
