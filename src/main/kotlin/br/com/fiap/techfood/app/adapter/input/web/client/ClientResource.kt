@@ -4,8 +4,9 @@ import br.com.fiap.techfood.app.adapter.input.web.client.dto.ClientRequest
 import br.com.fiap.techfood.app.adapter.input.web.client.dto.ClientResponse
 import br.com.fiap.techfood.app.adapter.input.web.client.mapper.toClientResponse
 import br.com.fiap.techfood.core.common.exception.ClientNotFoundException
-import br.com.fiap.techfood.core.common.exception.ClientAlreadyExistsException
 import br.com.fiap.techfood.core.port.input.ClientInputPort
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -16,17 +17,15 @@ class ClientResource(
 ) {
 
     @PostMapping
-    fun create(@RequestBody request: ClientRequest): ClientResponse {
-        try {
+    fun create(@RequestBody request: ClientRequest): ResponseEntity<Any> {
+        return try {
             clientInput.getClientByCpf(request.cpf)
-            throw ClientAlreadyExistsException() // Throw exception if client exists
+            ResponseEntity.status(HttpStatus.CONFLICT).body(mapOf("error" to "Client already exists"))
         } catch (e: ClientNotFoundException) {
-            // Proceed if client is not found
+            val client = clientInput.create(UUID.randomUUID(), request.cpf, request.name, request.email)
+            val clientResponse = client.toClientResponse() // Map domain to response DTO
+            ResponseEntity.status(HttpStatus.CREATED).body(clientResponse)
         }
-
-        // Create and persist the client
-        val client = clientInput.create(UUID.randomUUID(), request.cpf, request.name, request.email)
-        return client.toClientResponse()
     }
 
 
