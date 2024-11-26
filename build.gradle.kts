@@ -31,11 +31,7 @@ val springCloudVersion = "2023.0.1"
 val springMockk = "4.0.2"
 
 dependencies {
-	modules {
-		module("org.springframework.boot:spring-boot-starter-tomcat") {
-			replacedBy("org.springframework.boot:spring-boot-starter-undertow", "Use Undertow instead of tomcat")
-		}
-	}
+	// Spring and Kotlin Dependencies
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -49,25 +45,25 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-starter-config")
 	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 	implementation("org.springframework.cloud:spring-cloud-starter-bootstrap")
-
 	implementation("org.postgresql:postgresql:42.3.3")
-
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
+	// Cucumber Dependencies for Java (JUnit, Spring)
+	testImplementation("io.cucumber:cucumber-java:7.14.0")
+	testImplementation("io.cucumber:cucumber-spring:7.14.0")
+	testImplementation("io.cucumber:cucumber-junit:7.14.0") // For running with JUnit 4
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0") // JUnit 5 API
+	testImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.0") // JUnit engine for execution
+
+	// Mocking and Test Utilities
 	testImplementation("com.h2database:h2")
 	testImplementation("com.ninja-squad:springmockk:$springMockk")
 	testImplementation("com.tngtech.archunit:archunit-junit5:1.3.0")
 	testImplementation("io.mockk:mockk:$mockkVersion")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.springframework.cloud:spring-cloud-contract-wiremock")
-
-	testImplementation("io.cucumber:cucumber-java:7.14.0")
-	testImplementation("io.cucumber:cucumber-spring:7.14.0")
-	testImplementation("io.cucumber:cucumber-junit:7.14.0")
-
+	testImplementation("org.springframework.boot:spring-boot-starter-test") // Spring Boot Test
+	testImplementation("org.springframework.cloud:spring-cloud-contract-wiremock") // Wiremock for contract testing
 	testImplementation("org.mockito:mockito-core:5.5.0")
 	testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
-
 }
 
 dependencyManagement {
@@ -84,11 +80,7 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<Test> {
-	useJUnitPlatform()
-}
-
-jacoco {
-	toolVersion = "0.8.8" // Specify JaCoCo version
+	useJUnitPlatform() // Ensure JUnit is used for tests
 }
 
 tasks.jacocoTestReport {
@@ -103,12 +95,11 @@ tasks.jacocoTestReport {
 	classDirectories.setFrom(
 		fileTree("$buildDir/classes/kotlin/main") {
 			exclude(
-				"**/app/**", // Excluindo o pacote 'app'
-				"**/dto/**", // DTOs
-				"**/mapper/**", // Mapeadores
-				"**/configuration/**", // Configurações
-				"**/generated/**", // Código gerado
-				"**/web/handler/**"      // Excluir o pacote web.handler
+				"**/app/**", // Excluding certain packages from coverage
+				"**/dto/**",
+				"**/mapper/**",
+				"**/configuration/**",
+				"**/generated/**"
 			)
 		}
 	)
@@ -120,44 +111,13 @@ tasks.jacocoTestCoverageVerification {
 	violationRules {
 		rule {
 			limit {
-				minimum = 0.80.toBigDecimal() // 80% de cobertura mínima
+				minimum = 0.80.toBigDecimal() // 80% minimum coverage
 			}
 		}
 	}
 }
 
-
-
-
-
-
-//
-///************************
-// * JaCoCo Configuration *
-// ************************/
-//val exclusions = listOf(
-//	// Adapters: HTTP Controllers, Rest Handlers, etc.
-//	"**/br/com/fiap/techfood/app/adapter/input/web/handler/**", // No need to measure coverage for handlers
-//	"**/br/com/fiap/techfood/app/adapter/input/web/client/**", // No need to measure coverage for web adapters
-//	"**/br/com/fiap/techfood/app/adapter/output/persistence/**", // No need to measure persistence adapters
-//
-//	// DTOs and Mappers
-//	"**/br/com/fiap/techfood/app/adapter/input/web/client/dto/**", // Exclude DTO classes
-//	"**/br/com/fiap/techfood/app/adapter/output/persistence/mapper/**", // Exclude mappers
-//
-//	// Entities and Persistence Models
-//	"**/br/com/fiap/techfood/app/adapter/output/persistence/entity/**", // Exclude persistence models/entities
-//
-//	// Exception classes
-//	"**/br/com/fiap/techfood/core/common/exception/**", // Exclude exception classes
-//
-//	// Common or configuration code
-//	"**/br/com/fiap/techfood/app/configuration/**", // Exclude configuration classes
-//
-//	// Core domain classes, but not core logic (optional)
-//	"**/br/com/fiap/techfood/core/domain/vo/**", // Exclude value objects (VOs) that don't contain business logic
-//	"**/br/com/fiap/techfood/core/domain/**", // Optional: Exclude general domain classes if they are simple POJOs
-//
-//	// Miscellaneous or generated code
-//	"**/generated/**" // Exclude generated code like Lombok or other annotation processors
-//)
+// Explicitly include your test runner for Cucumber
+tasks.test {
+	include("**/RunCucumberTest.class") // Include the Cucumber test runner
+}
