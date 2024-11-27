@@ -15,12 +15,12 @@ data:
         CONSTRAINT tb_clients_email_key UNIQUE (email)
     );
 
-2_data.sql: |-
-  INSERT INTO tb_clients (id, name, cpf, email) VALUES 
+  2_data.sql: |-
+    INSERT INTO tb_clients (id, name, cpf, email) VALUES 
     ('550e8400-e29b-41d4-a716-446655440000', 'Alice Santos', '123.456.789-00', 'alice.santos@example.com'),
     ('550e8400-e29b-41d4-a716-446655440001', 'Carlos Oliveira', '987.654.321-00', 'carlos.oliveira@example.com'),
     ('550e8400-e29b-41d4-a716-446655440002', 'Mariana Costa', '159.753.486-00', 'mariana.costa@example.com');
-  2_data.sql: |-
+
     INSERT INTO tb_products (id, category, price, description, imageurl, name) VALUES
     -- SNACK ("Lanche", 1)
     ('f47ac10b-58cc-4372-a567-0e02b2c3d479', 1, 10.50, 'X-burguer com queijo e alface', 'http://example.com/images/xburguer.jpg', 'X-Burguer'),
