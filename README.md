@@ -2,6 +2,8 @@
 
 Este é um projeto do curso de Pós-graduação em Arquitetura de Software da FIAP compreende uma solução possível para um sistema de autoatendimento de restaurante do tipo fast-food, com quiosques ou terminais de autoatendimento, com o objetivo de otimizar o processo de pedidos, pagamento, preparação e entrega de comida..
 
+Acesse a **[documentação principal](https://github.com/FIAP-7SOAT/techfood-docs)** do projeto para mais detalhes!
+
 Autores membros do Grupo:
 
 - Geraldo Moratto Junior - RM356285
@@ -100,6 +102,9 @@ Baixar o Postman ou o API Client de sua preferência e importar a collection:
 - **Gradle 8**
 - **Kubernetes**
 
+--
+
+Acesse a **[documentação principal](https://github.com/FIAP-7SOAT/techfood-docs)** do projeto para mais detalhes!
 <!--
 
 ### Video da Arquitetura
