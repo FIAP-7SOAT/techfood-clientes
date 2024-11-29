@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: techfood-clientes-app
+  namespace: techfood-clientes
 spec:
   type: NodePort
   ports:

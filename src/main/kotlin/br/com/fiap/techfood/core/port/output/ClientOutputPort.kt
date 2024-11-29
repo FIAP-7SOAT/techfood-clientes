@@ -5,10 +5,11 @@ import br.com.fiap.techfood.core.domain.vo.ClientVO
 import java.util.*
 
 interface ClientOutputPort {
-    fun persist(client: Client): Client
-    fun findClientByCpf(clientCPF: String): Client?
-    fun findClientById(clientId: UUID): Client?
-    fun findByCpf(clientCPF: String): ClientVO?
+    fun save(client: Client): Client
+    fun findById(id: UUID): Client?
+    fun findByCpf(cpf: String): Client?
     fun findAll(): List<Client>
-    fun delete(client: Client)
+    fun update(id: UUID, client: Client): Client
+    fun deleteById(id: UUID)
+
 }

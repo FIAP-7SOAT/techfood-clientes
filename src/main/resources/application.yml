@@ -5,16 +5,30 @@ spring:
   application:
     name: techfood-clientes
 
+  cloud:
+    config:
+      enabled: false
+
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE:default}
 
-  datasource:
-    url: jdbc:postgresql://localhost:5433/techfood-clientes
-    username: postgres
-    password: postgres
+  data:
+    mongodb:
+      # Docker
+      # uri: mongodb://admin:password@mongo-clientes:27017/techfood-clientes?authSource=admin&uuidRepresentation=standard
+      # localhost
+      uri: mongodb://admin:password@localhost:27017/techfood-clientes?authSource=admin&uuidRepresentation=standard
+      database: techfood-clientes
+      uuid-representation: standard
+      connection-timeout: 60000  # Set a higher timeout value (in ms)
+      socket-timeout: 60000       # Set socket timeout value (in ms)
 
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: true
+logging:
+  level:
+    org.springframework.data.mongodb: DEBUG
+    com.mongodb: DEBUG
+
+
+
+
 

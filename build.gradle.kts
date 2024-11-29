@@ -38,22 +38,28 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-aop")
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+//	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-undertow")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.cloud:spring-cloud-starter")
-	implementation("org.springframework.cloud:spring-cloud-starter-config")
+//	implementation("org.springframework.cloud:spring-cloud-starter-config")
 	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 	implementation("org.springframework.cloud:spring-cloud-starter-bootstrap")
-	implementation("org.postgresql:postgresql:42.3.3")
+//	implementation("org.postgresql:postgresql:42.3.3")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+
+	// MongoDB
+	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
 
 	// Cucumber Dependencies for Java (JUnit, Spring)
 	testImplementation("io.cucumber:cucumber-java:7.14.0")
 	testImplementation("io.cucumber:cucumber-spring:7.14.0")
 	testImplementation("io.cucumber:cucumber-junit:7.14.0") // For running with JUnit 4
-	testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0") // JUnit 5 API
-	testImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.0") // JUnit engine for execution
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")  // JUnit 5 API
+	testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.0")  // JUnit 5 engine
 
 	// Mocking and Test Utilities
 	testImplementation("com.h2database:h2")
@@ -64,6 +70,10 @@ dependencies {
 	testImplementation("org.springframework.cloud:spring-cloud-contract-wiremock") // Wiremock for contract testing
 	testImplementation("org.mockito:mockito-core:5.5.0")
 	testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+
+	// Ensure you are using the correct Kotlin test dependencies
+	testImplementation("org.jetbrains.kotlin:kotlin-test")
+
 }
 
 dependencyManagement {
@@ -120,4 +130,5 @@ tasks.jacocoTestCoverageVerification {
 // Explicitly include your test runner for Cucumber
 tasks.test {
 	include("**/RunCucumberTest.class") // Include the Cucumber test runner
+	include("**/*Test.class") // Include all test classes
 }

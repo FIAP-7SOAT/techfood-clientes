@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: techfood-clientes-app
+  namespace: techfood-clientes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: techfood-clientes-app
+  template:
+    metadata:
+      labels:
+        app: techfood-clientes-app
+    spec:
+      containers:
+        - name: techfood-clientes-app
+          image: pcantarelli/techfood:latest  # Adicione uma tag específica
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          envFrom:
+            - secretRef:
+                name: secrets
