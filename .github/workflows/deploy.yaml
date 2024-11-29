@@ -1,0 +1,60 @@
+name: Deploy Kotlin App to EKS
+
+on:
+  push:
+    branches: "*"
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: kotlin-app
+  CLUSTER_NAME: techfood-eks
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
+
+      - name: Update kube config
+        run: aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+
+      - name: Deploy to EKS
+        run: |
+          sed -i "s|techfood-clientes/kotlin-app:latest|${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}|" kubernetes/deployment-app.yaml
+          kubectl apply -f kubernetes/secrets.yaml
+          kubectl apply -f kubernetes/config-db.yaml
+          kubectl apply -f kubernetes/pv-db.yaml
+          kubectl apply -f kubernetes/pvc-db.yaml
+          kubectl apply -f kubernetes/deployment-db.yaml
+          kubectl apply -f kubernetes/service-db.yaml
+          kubectl apply -f kubernetes/deployment-app.yaml
+          kubectl apply -f kubernetes/service-app.yaml
+          kubectl apply -f kubernetes/hpa-app.yaml

@@ -3,12 +3,10 @@
 ## Índice
 
 - [Visão Geral](#visão-geral)
-- [Requisitos](#requisitos)
 - [Domain-Driven Development (DDD)](#domain-driven-development-ddd)
 - [Arquitetura](#arquitetura)
 - [Funcionalidades Principais](#funcionalidades-principais)
 - [Principais Tecnologias Utilizadas](#principais-tecnologias-utilizadas)
-- [APIs Disponíveis](#apis-disponíveis)
 - [Como Executar](#como-executar)
 - [Acessando Swagger](#acessando-swagger)
 - [Banco de dados](#banco-de-dados)
@@ -16,23 +14,13 @@
 
 ### Visão Geral
 
-Este é um projeto do curso de Pós-graduação em Arquitetura de Software da FIAP compreende uma solução possível para um sistema de autoatendimento de restaurante do tipo fast-food, com quiosques ou terminais de autoatendimento, com o objetivo de otimizar o processo de pedidos, pagamento, preparação e entrega de comida..
+Este é um projeto do curso de Pós-graduação em Arquitetura de Software da FIAP compreende uma solução possível para um sistema de autoatendimento de restaurante do tipo fast-food, com quiosques ou terminais de autoatendimento, com o objetivo de otimizar o processo de pedidos, pagamento, preparação e entrega de comida.
 
 Autores membros do Grupo:
 
 - Geraldo Moratto Junior - RM356285
 - Pedro Cantarelli - RM355410
 - Vinicius Lopes - RM354901
-
-### Requisitos
-
-Em geral os clientes e administradores usarão o sistema, que dependerá de um serviço de pagamento externo.
-
-No atual momento, os requisitos do sistema são:
-
-- Gerenciamento de pedidos, com acompanhamento e pagamento.
-- Gerenciamento de clientes
-- Gerenciamento de produtos e categorias
 
 ### Domain-Driven Development (DDD)
 
@@ -49,6 +37,8 @@ O sistema expõe RESTful APIs para aplicações front-end, como terminais de aut
 
 Arquitetura Hexagonal (Ports and Adapters) e Clean Architecture foram adotadas no projeto.
 
+Separamos a aplicação monolito em microsserviços, agora cada serviçoe é responsável por uma parte da aplicação. Os microsserviços permitem que um aplicativo grande seja separado em partes independentes e menores, com cada parte tendo sua própria responsabilidade.
+
 #### Recursos provisionados no Kubernetes
 
 Lista de arquivos YAML com recursos do Kubernetes:
@@ -64,14 +54,18 @@ Lista de arquivos YAML com recursos do Kubernetes:
 - **service-db.yaml:** Mapeamento das portas para acesso ao serviço ClusterIP de banco de dados;
 
 [Arquitetura Kubernetes](https://www.figma.com/board/JpMG7uY03GHnNY92hHxdb3/Lanchonete-de-Bairro?node-id=0-1&t=W1aQzvEzhq0IOrMn-0)
-![Arquitetura Kubernetes](https://i.imgur.com/GXjyJq9.png)
+![Arquitetura Kubernetes Clientes](https://cdn.discordapp.com/attachments/1310749229756448779/1311490696871411712/image.png?ex=67490c64&is=6747bae4&hm=4532a0c613c1f5c37560d5801a8763d932aea28f1f210ffd074d81eb7902fe63&)
 
 ### Funcionalidades Principais
 
-- **Pedido Personalizado:** Os clientes podem criar pedidos personalizados, escolhendo entre uma variedade de itens, como lanches, acompanhamentos, bebidas e sobremesas.
-- **Pagamento Integrado:** Integração com o Mercado Pago, permitindo que os clientes efetuem o pagamento de seus pedidos através de um QRCode.
-- **Acompanhamento de Pedido:** Os clientes podem acompanhar o status de seus pedidos, desde o momento em que são recebidos até estarem prontos para retirada.
-- **Gerenciamento Administrativo:** Os administradores têm acesso a um painel de controle para gerenciar clientes, produtos, categorias e pedidos em andamento.
+No atual momento, os requisitos do microsserviço são:
+
+- Buscar Todos os Clientes
+- Buscar Cliente por CPF
+- Cadastrar Cliente
+- Atualizar Cliente
+
+A ideia principal é que os administradores tenha acesso a um painel de controle para gerenciar produtos e categorias.
 
 ### Principais Tecnologias Utilizadas
 
@@ -83,16 +77,7 @@ Lista de arquivos YAML com recursos do Kubernetes:
 - **Swagger**
 - **Gradle 8**
 - **Kubernetes**
-
-### APIs Disponíveis
-
-O TechFood expõe as seguintes APIs para integração:
-
-- **Cadastro do Cliente:** API para cadastrar novos clientes no sistema.
-- **Identificação do Cliente via CPF:** API para identificar clientes existentes utilizando o CPF.
-- **Gerenciamento de Produtos:** APIs para criar, editar e remover produtos do menu, além de buscar produtos por categoria.
-- **Checkout:** API para o checkout de pedidos, enviando os produtos escolhidos para a fila de preparação.
-- **Acompanhamento de Pedidos:** API para listar os pedidos em andamento e o tempo de espera de cada pedido.
+- **Terraform**
 
 ### Como Executar
 
@@ -102,13 +87,13 @@ Para executar o sistema, siga as instruções abaixo:
 2. Clone o repositório, no terminal executando o comando:
 
 ```
-$ git clone https://github.com/FIAP-7SOAT/tech-challenge-app
+$ git clone https://github.com/FIAP-7SOAT/techfood-produtos.git
 ```
 
 3. Entre na pasta do projeto:
 
 ```
-$ cd tech-challenge-app
+$ cd techfood-produtos
 ```
 
 4. Escolha como quer executar
