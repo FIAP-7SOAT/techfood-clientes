@@ -34,7 +34,7 @@ Lista de arquivos YAML com recursos do Kubernetes:
 - **service-db.yaml:** Mapeamento das portas para acesso ao serviço ClusterIP de banco de dados;
 
 [Arquitetura Kubernetes](https://www.figma.com/board/JpMG7uY03GHnNY92hHxdb3/Lanchonete-de-Bairro?node-id=0-1&t=W1aQzvEzhq0IOrMn-0)
-![Arquitetura Kubernetes](https://i.imgur.com/GXjyJq9.png)
+![Arquitetura Kubernetes](https://cdn.discordapp.com/attachments/1310749229756448779/1311490696871411712/image.png?ex=674a5de4&is=67490c64&hm=c6cffb64ceae81f29f690cf4cdbad9fcbc03b2259043409c7e14e168f6e20640&)
 
 ## APIs Disponíveis
 
