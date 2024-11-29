@@ -53,13 +53,13 @@ Para executar o sistema, siga as instruções abaixo:
 2. Clone o repositório, no terminal executando o comando:
 
 ```
-$ git clone https://github.com/FIAP-7SOAT/tech-challenge-app
+$ git clone https://github.com/FIAP-7SOAT/techfood-clientes
 ```
 
 3. Entre na pasta do projeto:
 
 ```
-$ cd tech-challenge-app
+$ cd techfood-clientes
 ```
 
 4. Escolha como quer executar
@@ -101,6 +101,7 @@ Baixar o Postman ou o API Client de sua preferência e importar a collection:
 - **Swagger**
 - **Gradle 8**
 - **Kubernetes**
+- **Terraform**
 
 --
 
