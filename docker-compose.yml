@@ -1,19 +1,23 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:13.3-alpine
-    container_name: postgres-clientes
+  mongo-clientes:
+    image: mongo:6.0
+    container_name: mongo-clientes
     ports:
-      - "5433:5432"
-    environment:
-      - POSTGRES_DB=techfood-clientes
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
+      - "27017:27017"
+    networks:
+      - techfood-network
     volumes:
-      - ./src/main/resources/sql_scripts/:/docker-entrypoint-initdb.d
+      - mongo-data:/data/db
+      - ./src/main/resources/init-scripts:/docker-entrypoint-initdb.d:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: techfood-clientes
+    restart: always
 
-  app:
+  techfood-clientes:
     container_name: techfood-clientes-app
     build:
       context: .
@@ -21,8 +25,16 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-      - postgres
+      - mongo-clientes
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/techfood-clientes
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
+      SPRING_DATA_MONGODB_URI: mongodb://admin:password@mongo-clientes:27017/techfood-clientes?authSource=admin
+    restart: always
+    networks:
+      - techfood-network
+
+networks:
+  techfood-network:
+    external: true
+
+volumes:
+  mongo-data:

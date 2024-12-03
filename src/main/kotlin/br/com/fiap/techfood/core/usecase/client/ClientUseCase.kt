@@ -14,10 +14,11 @@ import java.util.*
 class ClientUseCase(
     private val clientOutput: ClientOutputPort
 ): ClientInputPort {
-    override fun create(uuid: UUID, clientCpf: String, clientName: String, clientEmail: String): Client {
-        val existingClient = clientOutput.findClientByCpf(clientCpf)
+
+    override fun createClient(uuid: UUID, clientCpf: String, clientName: String, clientEmail: String): Client {
+        val existingClient = clientOutput.findByCpf(clientCpf)
         if (existingClient != null) {
-            throw ClientAlreadyExistsException()
+            throw ClientAlreadyExistsException("Client with id ${existingClient.id} already exists.")
         }
 
         val newClient = Client(
@@ -28,26 +29,40 @@ class ClientUseCase(
         )
 
         // Persist and return the new client
-        return clientOutput.persist(newClient)
+        return clientOutput.save(newClient)
     }
 
+    override fun getClientById(id: UUID): Client? {
+        return clientOutput.findById(id)
+    }
 
-    override fun getClientByCpf(clientCpf: String): ClientVO =
-        clientOutput.findByCpf(clientCpf)?: throw ClientNotFoundException()
+    override fun getClientByCpf(cpf: String): Client {
+        return clientOutput.findByCpf(cpf)
+            ?: throw ClientNotFoundException("Client with CPF $cpf not found.")
+    }
 
-    override fun findAll(): List<Client> {
+    override fun getAllClients(): List<Client> {
         return clientOutput.findAll()
     }
 
     override fun update(clientId: UUID, clientCpf: String, clientName: String, clientEmail: String): Client {
-        val existingClient = clientOutput.findClientById(clientId) ?: throw InvalidClientIdException()
-        val updatedClient = existingClient.copy(cpf = clientCpf, name = clientName, email = clientEmail)
-        return clientOutput.persist(updatedClient)
+        val existingClient = clientOutput.findById(clientId)
+            ?: throw ClientNotFoundException("Client with id $clientId not found.")
+
+        // Update the client fields
+        val updatedClient = existingClient.copy(
+            cpf = clientCpf,
+            name = clientName,
+            email = clientEmail
+        )
+
+        // Return the updated client after saving
+        return clientOutput.update(clientId, updatedClient)
     }
 
-    override fun delete(clientCpf: String) {
-        val existingClient = clientOutput.findClientByCpf(clientCpf) ?: throw ClientNotFoundException()
-        clientOutput.delete(existingClient)
+
+    override fun deleteClient(id: UUID) {
+        clientOutput.deleteById(id)
     }
 
 }

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  namespace: techfood-clientes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:5.0
+          command:
+            - "mongod"
+            - "--bind_ip_all"
+            - "--auth"
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: init-script
+              mountPath: /docker-entrypoint-initdb.d/init.js
+              subPath: init.js
+            - name: data-volume
+              mountPath: /data/db
+      volumes:  # volumes deve estar fora do containers
+        - name: init-script
+          configMap:
+            name: mongodb-init-scripts
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: mongodb-pvc

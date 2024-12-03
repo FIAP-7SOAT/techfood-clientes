@@ -2,101 +2,151 @@ package br.com.fiap.techfood.core.usecase.client
 
 import br.com.fiap.techfood.core.common.exception.ClientAlreadyExistsException
 import br.com.fiap.techfood.core.common.exception.ClientNotFoundException
-import br.com.fiap.techfood.core.common.exception.InvalidClientIdException
 import br.com.fiap.techfood.core.domain.Client
-import br.com.fiap.techfood.core.domain.vo.ClientVO
 import br.com.fiap.techfood.core.port.output.ClientOutputPort
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.util.*
 
 class ClientUseCaseTest {
 
-    private val clientOutput: ClientOutputPort = mockk()
-    private val clientUseCase = ClientUseCase(clientOutput)
+    private val clientOutputPort: ClientOutputPort = mockk()
+    private val clientUseCase = ClientUseCase(clientOutputPort)
 
     @Test
-    fun `should create a new client`() {
-        val client = Client(UUID.randomUUID(), "12345678900", "John Doe", "john@example.com")
-
-        every { clientOutput.findClientByCpf(client.cpf) } returns null
-        every { clientOutput.persist(any()) } answers { firstArg() }
-
-        val createdClient = clientUseCase.create(client.id, client.cpf, client.name, client.email)
-
-        assertEquals(client.cpf, createdClient.cpf)
-    }
-
-
-    @Test
-    fun `should throw exception when client already exists`() {
-        val cpf = "12345678900"
-        every { clientOutput.findClientByCpf(cpf) } returns Client(UUID.randomUUID(), cpf, "Existing User", "existing@example.com")
-
-        assertThrows(ClientAlreadyExistsException::class.java) {
-            clientUseCase.create(UUID.randomUUID(), cpf, "New User", "new@example.com")
-        }
-    }
-
-    @Test
-    fun `should get client by CPF`() {
-        val clientCpf = "12345678900"
-        val clientVO = ClientVO(UUID.randomUUID(), clientCpf, "John Doe", "john@example.com")
-
-        every { clientOutput.findByCpf(clientCpf) } returns clientVO
-
-        val result = clientUseCase.getClientByCpf(clientCpf)
-
-        assertEquals(clientCpf, result.cpf)
-    }
-
-    @Test
-    fun `should throw exception when client not found by CPF`() {
-        val cpf = "12345678900"
-        every { clientOutput.findByCpf(cpf) } returns null
-
-        assertThrows(ClientNotFoundException::class.java) {
-            clientUseCase.getClientByCpf(cpf)
-        }
-    }
-
-    @Test
-    fun `should return all clients`() {
-        val clients = listOf(Client(UUID.randomUUID(), "12345678900", "John Doe", "john@example.com"))
-        every { clientOutput.findAll() } returns clients
-
-        val result = clientUseCase.findAll()
-
-        assertFalse(result.isEmpty())
-        assertEquals(1, result.size)
-    }
-
-    @Test
-    fun `should update client successfully`() {
+    fun `createClient should save a new client`() {
+        // Arrange
         val clientId = UUID.randomUUID()
-        val updatedClient = Client(clientId, "12345678900", "John Doe Updated", "john_updated@example.com")
+        val clientCpf = "12345678901"
+        val clientName = "Client A"
+        val clientEmail = "clientA@example.com"
+        val client = Client(clientId, clientCpf, clientName, clientEmail)
+        every { clientOutputPort.findByCpf(clientCpf) } returns null
+        every { clientOutputPort.save(client) } returns client
 
-        every { clientOutput.findClientById(clientId) } returns updatedClient
-        every { clientOutput.persist(any()) } answers { firstArg() }
+        // Act
+        val result = clientUseCase.createClient(clientId, clientCpf, clientName, clientEmail)
 
-        val result = clientUseCase.update(clientId, "12345678900", "John Doe Updated", "john_updated@example.com")
-
-        assertEquals(updatedClient.id, result.id)
-        assertEquals("John Doe Updated", result.name)
+        // Assert
+        assertNotNull(result)
+        assertEquals(clientId, result.id)
+        assertEquals(clientName, result.name)
+        verify { clientOutputPort.findByCpf(clientCpf) }
+        verify { clientOutputPort.save(client) }
     }
 
     @Test
-    fun `should throw exception when client to update not found`() {
+    fun `createClient should throw exception if client with CPF already exists`() {
+        // Arrange
         val clientId = UUID.randomUUID()
+        val clientCpf = "12345678901"
+        val clientName = "Client A"
+        val clientEmail = "clientA@example.com"
+        val existingClient = Client(clientId, clientCpf, clientName, clientEmail)
+        every { clientOutputPort.findByCpf(clientCpf) } returns existingClient
 
-        every { clientOutput.findClientById(clientId) } returns null
-
-        assertThrows(InvalidClientIdException::class.java) {
-            clientUseCase.update(clientId, "12345678900", "John Doe", "john@example.com")
+        // Act & Assert
+        val exception = assertThrows(ClientAlreadyExistsException::class.java) {
+            clientUseCase.createClient(clientId, clientCpf, clientName, clientEmail)
         }
+        assertEquals("Client with id $clientId already exists.", exception.message)
+        verify { clientOutputPort.findByCpf(clientCpf) }
+        verify(exactly = 0) { clientOutputPort.save(any()) }
     }
 
+    @Test
+    fun `getClientById should return a client when found`() {
+        // Arrange
+        val clientId = UUID.randomUUID()
+        val client = Client(clientId, "12345678901", "Client A", "clientA@example.com")
+        every { clientOutputPort.findById(clientId) } returns client
 
+        // Act
+        val result = clientUseCase.getClientById(clientId)
+
+        // Assert
+        assertNotNull(result)
+        assertEquals(clientId, result?.id)
+        verify { clientOutputPort.findById(clientId) }
+    }
+
+    @Test
+    fun `getClientById should return null when client is not found`() {
+        // Arrange
+        val clientId = UUID.randomUUID()
+        every { clientOutputPort.findById(clientId) } returns null
+
+        // Act
+        val result = clientUseCase.getClientById(clientId)
+
+        // Assert
+        assertNull(result)
+        verify { clientOutputPort.findById(clientId) }
+    }
+
+    @Test
+    fun `update should update an existing client`() {
+        // Arrange
+        val clientId = UUID.randomUUID()
+        val client = Client(clientId, "12345678901", "Client A", "clientA@example.com")
+        val updatedClient = client.copy(cpf = "98765432100", name = "Updated Client", email = "updated@example.com")
+        every { clientOutputPort.findById(clientId) } returns client
+        every { clientOutputPort.update(clientId, updatedClient) } returns updatedClient
+
+        // Act
+        val result = clientUseCase.update(clientId, updatedClient.cpf, updatedClient.name, updatedClient.email)
+
+        // Assert
+        assertNotNull(result)
+        assertEquals("Updated Client", result.name)
+        verify { clientOutputPort.findById(clientId) }
+        verify { clientOutputPort.update(clientId, updatedClient) }
+    }
+
+    @Test
+    fun `update should throw exception if client not found`() {
+        // Arrange
+        val clientId = UUID.randomUUID()
+        every { clientOutputPort.findById(clientId) } returns null
+
+        // Act & Assert
+        val exception = assertThrows(ClientNotFoundException::class.java) {
+            clientUseCase.update(clientId, "98765432100", "Updated Client", "updated@example.com")
+        }
+        assertEquals("Client with id $clientId not found.", exception.message)
+        verify { clientOutputPort.findById(clientId) }
+        verify(exactly = 0) { clientOutputPort.update(any(), any()) }
+    }
+
+    @Test
+    fun `deleteClient should delete a client`() {
+        // Arrange
+        val clientId = UUID.randomUUID()
+        every { clientOutputPort.deleteById(clientId) } just Runs
+
+        // Act
+        assertDoesNotThrow { clientUseCase.deleteClient(clientId) }
+
+        // Assert
+        verify { clientOutputPort.deleteById(clientId) }
+    }
+
+    @Test
+    fun `getAllClients should return a list of clients`() {
+        // Arrange
+        val clients = listOf(
+            Client(UUID.randomUUID(), "12345678901", "Client A", "clientA@example.com"),
+            Client(UUID.randomUUID(), "98765432100", "Client B", "clientB@example.com")
+        )
+        every { clientOutputPort.findAll() } returns clients
+
+        // Act
+        val result = clientUseCase.getAllClients()
+
+        // Assert
+        assertNotNull(result)
+        assertEquals(2, result.size)
+        verify { clientOutputPort.findAll() }
+    }
 }

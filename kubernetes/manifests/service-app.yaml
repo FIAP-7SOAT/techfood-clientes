@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: techfood-clientes-app
+  namespace: techfood-clientes
+spec:
+  selector:
+    app: techfood-clientes-app
+  ports:
+    - protocol: TCP
+      port: 8081        # Porta do serviço no Kubernetes
+      targetPort: 8081  # Porta interna do container
+      nodePort: 30081   # Porta exposta na máquina host (para acesso externo)
+  type: NodePort

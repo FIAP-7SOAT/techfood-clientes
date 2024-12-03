@@ -30,11 +30,11 @@ class ClientStepsTest {
 
     @When("the client sends a POST request to {string}")
     fun whenTheClientSendsRequest(url: String) {
-        every { clientOutput.findClientByCpf(client.cpf) } returns null // Simulating no existing client
+        every { clientOutput.findByCpf(client.cpf) } returns null // Simulating no existing client
 
         response = try {
-            every { clientOutput.persist(client) } returns client
-            val createdClient = clientUseCase.create(client.id, client.cpf, client.name, client.email)
+            every { clientOutput.save(client) } returns client
+            val createdClient = clientUseCase.createClient(client.id, client.cpf, client.name, client.email)
             val location = URI.create("/api/clients/${createdClient.id}")
             ResponseEntity.created(location).body(createdClient)
         } catch (e: Exception) {
@@ -46,18 +46,18 @@ class ClientStepsTest {
     @Given("a client already exists with CPF {string}")
     fun givenAClientAlreadyExistsWithCpf(cpf: String) {
         client = Client(UUID.randomUUID(), cpf, "Jane Doe", "jane.doe@example.com")
-        every { clientOutput.findClientByCpf(cpf) } returns client // Simulating that the client exists
+        every { clientOutput.findByCpf(cpf) } returns client // Simulating that the client exists
     }
 
     @When("the client sends a POST request to {string} with existing CPF")
     fun whenTheClientSendsRequestWithExistingCpf(url: String) {
         response = try {
-            val existingClient = clientOutput.findClientByCpf(client.cpf)
+            val existingClient = clientOutput.findByCpf(client.cpf)
             if (existingClient != null) {
                 ResponseEntity.status(HttpStatus.CONFLICT).body("Client already exists")
             } else {
-                every { clientOutput.persist(client) } returns client
-                val createdClient = clientUseCase.create(client.id, client.cpf, client.name, client.email)
+                every { clientOutput.save(client) } returns client
+                val createdClient = clientUseCase.createClient(client.id, client.cpf, client.name, client.email)
                 val location = URI.create("/api/clients/${createdClient.id}")
                 ResponseEntity.created(location).body(createdClient)
             }
