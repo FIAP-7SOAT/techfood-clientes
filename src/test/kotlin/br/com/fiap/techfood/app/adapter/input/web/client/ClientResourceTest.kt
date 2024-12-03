@@ -3,6 +3,7 @@ package br.com.fiap.techfood.app.adapter.input.web.client
 import br.com.fiap.techfood.app.adapter.input.web.client.dto.ClientRequest
 import br.com.fiap.techfood.app.adapter.input.web.client.dto.ClientResponse
 import br.com.fiap.techfood.core.common.exception.ClientAlreadyExistsException
+import br.com.fiap.techfood.core.common.exception.ClientNotFoundException
 import br.com.fiap.techfood.core.domain.Client
 import br.com.fiap.techfood.core.port.input.ClientInputPort
 import io.mockk.every
@@ -10,7 +11,6 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import java.util.*
 
 class ClientResourceTest {
@@ -90,21 +90,27 @@ class ClientResourceTest {
 
         // Assert
         assertNotNull(result)
-        assertEquals(cpf, result?.cpf)
+        assertEquals(HttpStatus.OK, result.statusCode)  // Verificando o status da resposta
+        val body = result.body as ClientResponse  // Aqui, assumindo que o corpo da resposta seja do tipo ClientResponse
+        assertEquals(cpf, body.cpf)
     }
 
+
     @Test
-    fun `getClientByCpf should return null when client is not found`() {
+    fun `getClientByCpf should return 404 when client not found`() {
         // Arrange
         val cpf = "12345678901"
-        every { clientInput.getClientByCpf(cpf) } returns null
+        every { clientInput.getClientByCpf(cpf) } throws ClientNotFoundException("Client with CPF $cpf not found")
 
         // Act
         val result = clientResource.getClientByCpf(cpf)
 
         // Assert
-        assertNull(result)
+        assertEquals(HttpStatus.NOT_FOUND, result.statusCode)
+        val body = result.body as Map<String, String>  // Aqui, assume-se que a resposta seja uma mensagem de erro
+        assertEquals("Client with CPF $cpf not found", body["error"])
     }
+
 
     @Test
     fun `getAllClients should return a list of clients`() {

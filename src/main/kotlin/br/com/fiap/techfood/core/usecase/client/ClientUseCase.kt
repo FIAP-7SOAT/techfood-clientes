@@ -36,8 +36,9 @@ class ClientUseCase(
         return clientOutput.findById(id)
     }
 
-    override fun getClientByCpf(cpf: String): Client? {
+    override fun getClientByCpf(cpf: String): Client {
         return clientOutput.findByCpf(cpf)
+            ?: throw ClientNotFoundException("Client with CPF $cpf not found.")
     }
 
     override fun getAllClients(): List<Client> {

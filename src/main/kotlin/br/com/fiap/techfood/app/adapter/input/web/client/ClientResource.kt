@@ -4,6 +4,7 @@ import br.com.fiap.techfood.app.adapter.input.web.client.dto.ClientRequest
 import br.com.fiap.techfood.app.adapter.input.web.client.dto.ClientResponse
 import br.com.fiap.techfood.app.adapter.input.web.client.mapper.toClientResponse
 import br.com.fiap.techfood.core.common.exception.ClientAlreadyExistsException
+import br.com.fiap.techfood.core.common.exception.ClientNotFoundException
 import br.com.fiap.techfood.core.domain.Client
 import br.com.fiap.techfood.core.port.input.ClientInputPort
 import org.springframework.http.HttpStatus
@@ -34,9 +35,16 @@ class ClientResource(
     }
 
     @GetMapping("/cpf/{cpf}")
-    fun getClientByCpf(@PathVariable cpf: String): Client? {
-        return clientInput.getClientByCpf(cpf)
+    fun getClientByCpf(@PathVariable cpf: String): ResponseEntity<Any> {
+        return try {
+            val client = clientInput.getClientByCpf(cpf) // A exceção será lançada se não encontrar o cliente
+            val clientResponse = client?.toClientResponse()
+            ResponseEntity.ok(clientResponse)
+        } catch (e: ClientNotFoundException) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to e.message))
+        }
     }
+
 
     @GetMapping
     fun getAllClients(): List<Client> {
