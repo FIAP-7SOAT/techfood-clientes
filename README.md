@@ -1,20 +1,8 @@
-# TechFood-Clientes - Sistema de Autoatendimento para Restaurante FastFood
+# TechFood Clientes - Sistema de Autoatendimento para Restaurante FastFood
 
-## Índice
+Este é um projeto do curso de Pós-graduação em Arquitetura de Software da FIAP compreende uma solução possível para um sistema de autoatendimento de restaurante do tipo fast-food, com quiosques ou terminais de autoatendimento, com o objetivo de otimizar o processo de pedidos, pagamento, preparação e entrega de comida..
 
-- [Visão Geral](#visão-geral)
-- [Domain-Driven Development (DDD)](#domain-driven-development-ddd)
-- [Arquitetura](#arquitetura)
-- [Funcionalidades Principais](#funcionalidades-principais)
-- [Principais Tecnologias Utilizadas](#principais-tecnologias-utilizadas)
-- [Como Executar](#como-executar)
-- [Acessando Swagger](#acessando-swagger)
-- [Banco de dados](#banco-de-dados)
-- [Postman Collection](#postman-collection)
-
-### Visão Geral
-
-Este é um projeto do curso de Pós-graduação em Arquitetura de Software da FIAP compreende uma solução possível para um sistema de autoatendimento de restaurante do tipo fast-food, com quiosques ou terminais de autoatendimento, com o objetivo de otimizar o processo de pedidos, pagamento, preparação e entrega de comida.
+Acesse a **[documentação principal](https://github.com/FIAP-7SOAT/techfood-docs)** do projeto para mais detalhes!
 
 Autores membros do Grupo:
 
@@ -22,23 +10,14 @@ Autores membros do Grupo:
 - Pedro Cantarelli - RM355410
 - Vinicius Lopes - RM354901
 
-### Domain-Driven Development (DDD)
+## Índice
 
-A abordagem utilizada para o desenvolvimento foi a DDD, com as seguintes saídas:
-
-- [Glossário ubíquo](https://www.figma.com/board/JpMG7uY03GHnNY92hHxdb3/Lanchonete-de-Bairro?node-id=217-13086&t=TfMJyuLNDTmXck6Z-4)
-- [Event storming](https://www.figma.com/board/JpMG7uY03GHnNY92hHxdb3/Lanchonete-de-Bairro?node-id=0-1&t=TfMJyuLNDTmXck6Z-0)
-- Storytelling
-- Mapa de Contexto
-
-### Arquitetura
-
-O sistema expõe RESTful APIs para aplicações front-end, como terminais de autoatendimento para clientes e interfaces para administradores. Tem como dependência um provedor externo de pagamento, o MercadoPago.
-
-Arquitetura Hexagonal (Ports and Adapters) e Clean Architecture foram adotadas no projeto.
-
-Separamos a aplicação monolito em microsserviços, agora cada serviçoe é responsável por uma parte da aplicação. Os microsserviços permitem que um aplicativo grande seja separado em partes independentes e menores, com cada parte tendo sua própria responsabilidade.
-
+- [Recursos provisionados no Kubernetes](#recursos-provisionados-no-kubernetes)
+- [APIs Disponíveis](#apis-disponíveis)
+- [Como Executar](#como-executar)
+- [Banco de dados](#banco-de-dados)
+- [Acessando Swagger](#acessando-swagger)
+- [Postman Collection](#postman-collection)
 #### Recursos provisionados no Kubernetes
 
 Lista de arquivos YAML com recursos do Kubernetes:
@@ -56,9 +35,9 @@ Lista de arquivos YAML com recursos do Kubernetes:
 [Arquitetura Kubernetes](https://www.figma.com/board/JpMG7uY03GHnNY92hHxdb3/Lanchonete-de-Bairro?node-id=0-1&t=W1aQzvEzhq0IOrMn-0)
 ![Arquitetura Kubernetes Clientes](https://cdn.discordapp.com/attachments/1310749229756448779/1311490696871411712/image.png?ex=67490c64&is=6747bae4&hm=4532a0c613c1f5c37560d5801a8763d932aea28f1f210ffd074d81eb7902fe63&)
 
-### Funcionalidades Principais
+## APIs Disponíveis
 
-No atual momento, os requisitos do microsserviço são:
+O TechFood Pedidos expõe as seguintes APIs para integração:
 
 - Buscar Todos os Clientes
 - Buscar Cliente por CPF
@@ -67,19 +46,7 @@ No atual momento, os requisitos do microsserviço são:
 
 A ideia principal é que os administradores tenha acesso a um painel de controle para gerenciar produtos e categorias.
 
-### Principais Tecnologias Utilizadas
-
-- **Kotlin**
-- **Java 17**
-- **Spring-Boot 3.2.5**
-- **PostgreSQL**
-- **Docker**
-- **Swagger**
-- **Gradle 8**
-- **Kubernetes**
-- **Terraform**
-
-### Como Executar
+## Como Executar
 
 Para executar o sistema, siga as instruções abaixo:
 
@@ -87,21 +54,47 @@ Para executar o sistema, siga as instruções abaixo:
 2. Clone o repositório, no terminal executando o comando:
 
 ```
-$ git clone https://github.com/FIAP-7SOAT/techfood-produtos.git
+$ git clone https://github.com/FIAP-7SOAT/techfood-clientes.git
 ```
 
 3. Entre na pasta do projeto:
 
 ```
-$ cd techfood-produtos
+$ cd techfood-clientes
 ```
 
-4. Escolha como quer executar
+### Script para Iniciar o Serviço
 
-- [Docker](docs/docker.md)
-- [Kubernetes](docs/kubernetes.md)
+Para iniciar os aplicativos, utilize o script localizado em: `start/start.sh`
 
-### Banco de dados
+Comando para executar:
+
+```
+cd start
+./start.sh
+```
+
+### Script para Deploy
+
+Para realizar o deploy dos aplicativos seguindo a sequência correta e evitar erros, utilize o script localizado em `kubernetes/scripts/deploy.sh`
+
+#### Comando para executar
+
+```bash
+cd kubernetes/scripts
+./deploy.sh
+```
+
+Os arquivos de configuração para o deploy estão na pasta `kubernetes/manifests/`
+
+### Cobertura de Testes
+
+Utilizamos o **[JacocoReport](https://www.jacoco.org/jacoco/trunk/index.html)** para gerar relatórios de cobertura de testes.
+
+1. Comando para gerar o relatório: `./gradlew jacocoTestReport`.
+2. Localização do relatório gerado: `/techfood-clientes/build/reports/jacoco/test/html`
+
+## Banco de dados
 
 Leia a documentação do banco de dados [aqui](docs/database.md)
 
@@ -114,18 +107,30 @@ Para vizualizar o Banco de Dados através, recomendamos que baixe o DBeaver ou o
 - Username: postgres
 - Password: postgres
 
-### Acessando Swagger
+## Acessando Swagger
 
 Acesse a documentação da API através do Swagger para começar a interagir com o sistema.
 Para acessar o Swagger utilize a url [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html).
 
-### Postman Collection
+## Postman Collection
 
 Baixar o Postman ou o API Client de sua preferência e importar a collection:
 
 [API Client Collection](src/main/resources/collection/fiap_techfood_postman_collection.json).
 
-### Video da Arquitetura
+## Principais Tecnologias Utilizadas
 
-- [Funcionamento da apliação](https://www.youtube.com/watch?v=33iDsv87Nnc&ab_channel=PedroCantarelli).
-- [Arquitetura do Projeto](https://www.youtube.com/watch?v=a7mExdMBwO4&ab_channel=PedroCantarelli)
+- **Kotlin**
+- **Java 17**
+- **Spring-Boot 3.2.5**
+- **PostgreSQL**
+- **Docker**
+- **Swagger**
+- **Gradle 8**
+- **Kubernetes**
+- **Terraform**
+- **JacocoReport**
+
+---
+
+Acesse a **[documentação principal](https://github.com/FIAP-7SOAT/techfood-docs)** do projeto para mais detalhes!
